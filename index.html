@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Site Monitor</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="login-layout">
+    
+    <div class="login-left">
+      <div class="login-left-content">
+        <div style="width: 64px; height: 64px; margin-bottom: 32px; display: flex; align-items: center; justify-content: center; position: relative;">
+          <div style="background: rgba(255,255,255,0.1); width: 100%; height: 100%; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; position: absolute; z-index: 1;">
+            <i class="ph ph-shield-check"></i>
+          </div>
+          <img src="assets/logo.png" alt="Site Monitor Logo" style="max-width: 100%; max-height: 100%; object-fit: contain; position: absolute; z-index: 2;" onerror="this.style.display='none'" />
+        </div>
+        <h1>Municipal Construction Safety Monitor</h1>
+        <p>A centralized platform for civic officials and NGO partner organizations to track, manage, and resolve urban safety violations in real time.</p>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="login-card">
+        
+        <div class="login-icon-top">
+          <i class="ph ph-buildings"></i>
+        </div>
+        
+        <h2 id="auth-title">Welcome Back</h2>
+        <p id="auth-subtitle">Login to securely access the monitoring tools.</p>
+
+        <div class="login-tabs-form">
+          <button class="login-tab active" onclick="switchLoginTab('gov', this)">Government Official</button>
+          <button class="login-tab" onclick="switchLoginTab('ngo', this)">NGO Partner</button>
+        </div>
+
+        <form id="auth-form">
+          <div class="form-group" id="name-group" style="display: none;">
+            <label>Full Name</label>
+            <input type="text" class="form-input" id="name-input" placeholder="e.g. Jane Doe" />
+          </div>
+          <div class="form-group">
+            <label id="lbl-email">Department Email</label>
+            <input type="email" class="form-input" placeholder="e.g. name@department.gov" required />
+          </div>
+          <div class="form-group">
+            <label>Password / Access Key</label>
+            <input type="password" class="form-input" placeholder="Enter secure password" required />
+          </div>
+          
+          <button type="submit" class="login-btn-submit" id="auth-submit-btn">Sign In to Dashboard</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
+          <span id="auth-switch-text">Don't have an account?</span> 
+          <a href="#" onclick="toggleAuthMode(event)" style="color: var(--blue-primary); font-weight: 600; text-decoration: none;">Sign up here</a>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
+
+    window.switchLoginTab = function(type, element) {
+      document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+      element.classList.add('active');
+      
+      const emailLabel = document.getElementById('lbl-email');
+      const emailInput = document.querySelector('input[type="email"]');
+      
+      if (type === 'gov') {
+        emailLabel.innerText = 'Department Email';
+        emailInput.placeholder = 'e.g. name@department.gov';
+      } else {
+        emailLabel.innerText = 'NGO Partner Email';
+        emailInput.placeholder = 'e.g. name@partner-ngo.org';
+      }
+    };
+
+    let isSignup = false;
+    window.toggleAuthMode = function(e) {
+      e.preventDefault();
+      isSignup = !isSignup;
+      
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+      const nameGroup = document.getElementById('name-group');
+      const nameInput = document.getElementById('name-input');
+      const submitBtn = document.getElementById('auth-submit-btn');
+      const switchText = document.getElementById('auth-switch-text');
+      const switchLink = e.target;
+      
+      if (isSignup) {
+        title.innerText = 'Create Account';
+        subtitle.innerText = 'Sign up to access the monitoring system.';
+        nameGroup.style.display = 'block';
+        nameInput.setAttribute('required', 'true');
+        submitBtn.innerText = 'Create Account';
+        switchText.innerText = 'Already have an account?';
+        switchLink.innerText = 'Sign in';
+      } else {
+        title.innerText = 'Welcome Back';
+        subtitle.innerText = 'Login to securely access the monitoring tools.';
+        nameGroup.style.display = 'none';
+        nameInput.removeAttribute('required');
+        submitBtn.innerText = 'Sign In to Dashboard';
+        switchText.innerText = 'Don\'t have an account?';
+        switchLink.innerText = 'Sign up here';
+      }
+    };
+
+    // Firebase Auth Interception
+    const authForm = document.getElementById('auth-form');
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.querySelector('input[type="email"]').value;
+      const password = document.querySelector('input[type="password"]').value;
+      const submitBtn = document.getElementById('auth-submit-btn');
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Authenticating...";
+
+      try {
+        if (isSignup) {
+          // Attempt Firebase Signup
+          await createUserWithEmailAndPassword(auth, email, password);
+          window.location.href = "dashboard.html";
+        } else {
+          // Attempt Firebase Login
+          await signInWithEmailAndPassword(auth, email, password);
+          window.location.href = "dashboard.html";
+        }
+      } catch (error) {
+        console.error("Auth Error", error);
+        const errorCode = error?.code || '';
+        let userMessage = 'Authentication failed. Please check your details and try again.';
+
+        if (errorCode === 'auth/invalid-email') {
+          userMessage = 'Please enter a valid email address.';
+        } else if (isSignup && errorCode === 'auth/email-already-in-use') {
+          userMessage = 'An account already exists for this email.';
+        } else if (!isSignup && (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password' || errorCode === 'auth/invalid-credential')) {
+          userMessage = 'Invalid email or password.';
+        }
+
+        alert(userMessage);
+        submitBtn.disabled = false;
+        submitBtn.innerText = isSignup ? 'Create Account' : 'Sign In to Dashboard';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central Registry | Site Monitor</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon">
+          <i class="ph ph-shield-check"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Site Monitor</span>
+          <span class="logo-subtitle">Department of Works</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <i class="ph ph-squares-four"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="complaints.html" class="nav-item active">
+          <i class="ph ph-warning-circle"></i>
+          <span>Complaints</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="ph ph-map-trifold"></i>
+          <span>Map</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="ph ph-bell"></i>
+          <span>Notifications</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item">
+          <i class="ph ph-gear"></i>
+          <span>Settings</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Header -->
+      <header class="top-header">
+        <div class="search-bar">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="search" placeholder="Search IDs or locations" />
+        </div>
+        <div class="header-actions">
+          <div class="action-icon">
+            <i class="ph ph-warning"></i>
+          </div>
+          <div class="action-icon has-badge">
+            <i class="ph ph-bell"></i>
+            <span class="badge">3</span>
+          </div>
+          <div class="admin-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&rounded=true" alt="Admin Avatar" class="avatar" />
+            <div class="admin-info">
+              <span class="admin-name">Admin User</span>
+              <span class="admin-role">Chief Inspector</span>
+            </div>
+            <i class="ph ph-caret-down"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard View -->
+      <div class="dashboard-scroll-area">
+        <div class="dashboard-container max-width-large">
+          
+          <div class="page-header header-flex">
+            <div>
+              <h1>Central Registry</h1>
+              <p>Monitoring civic reports across city sectors</p>
+            </div>
+            <div class="header-buttons">
+              <button class="btn btn-secondary"><i class="ph ph-export"></i> Export Data</button>
+              <button class="btn btn-primary"><i class="ph ph-plus"></i> New Report</button>
+            </div>
+          </div>
+
+          <!-- Extended Stats Cards (6 cards) -->
+          <div class="stats-grid grid-6">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Resolution Velocity</span>
+              </div>
+              <div class="stat-value">2.4 Days</div>
+              <div class="stat-trend positive">
+                <i class="ph ph-trend-down"></i>
+                <span>-12% from last month</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Active Cases</span>
+              </div>
+              <div class="stat-value">1,187</div>
+              <div class="stat-trend negative">
+                <i class="ph ph-trend-up"></i>
+                <span>+4% from last month</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Critical Alerts</span>
+              </div>
+              <div class="stat-value" style="color: var(--red-main)">24</div>
+              <div class="stat-trend positive">
+                <i class="ph ph-trend-down"></i>
+                <span>-2 from last week</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Zone Efficiency</span>
+              </div>
+              <div class="stat-value">94.2%</div>
+              <div class="stat-trend positive">
+                <i class="ph ph-trend-up"></i>
+                <span>Target: >90%</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Priority Queue</span>
+              </div>
+              <div class="stat-value" style="color: var(--orange-main)">8</div>
+              <div class="stat-trend negative">
+                <i class="ph ph-trend-up"></i>
+                <span>Unassigned High-Risk</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">System Health Status</span>
+              </div>
+              <div class="stat-value" style="color: var(--green-main)">Online</div>
+              <div class="stat-trend positive">
+                <i class="ph ph-check"></i>
+                <span>All systems operational</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panels Row -->
+          <div class="panels-grid">
+            <div class="chart-card">
+              <div class="card-header">
+                <h3>Zone Intelligence</h3>
+                <span class="subtitle-badge">Complaints by Sector</span>
+              </div>
+              <div class="card-body">
+                <canvas id="zoneChart"></canvas>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="card-header">
+                <h3>Live Fleet Deployment</h3>
+                <span class="subtitle-badge">Active Units</span>
+              </div>
+              <div class="card-body">
+                <canvas id="fleetChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Section -->
+          <div class="card table-card">
+            <div class="table-header">
+              <div class="tabs">
+                <button class="tab-btn active">All</button>
+                <button class="tab-btn">Pending</button>
+                <button class="tab-btn">Under Review</button>
+                <button class="tab-btn">Verified</button>
+                <button class="tab-btn">Resolved</button>
+              </div>
+              <div class="table-actions">
+                <div class="search-bar small">
+                  <i class="ph ph-magnifying-glass"></i>
+                  <input type="text" placeholder="Filter..." />
+                </div>
+                <button class="btn-icon"><i class="ph ph-funnel"></i></button>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table class="complaint-table">
+                <thead>
+                  <tr>
+                    <th>Complaint ID</th>
+                    <th>Visual Log</th>
+                    <th>Location</th>
+                    <th>Date Submitted</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>#CMP-8842</strong></td>
+                    <td>
+                      <div class="visual-log">
+                        <img src="assets/violation1.png" alt="Evidence" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Downtown Sector</span>
+                        <span class="td-sub">400 Broad St</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Oct 12, 09:30 AM</span>
+                        <span class="td-sub">By Citizen App</span>
+                      </div>
+                    </td>
+                    <td><span class="badge-status status-pending">Pending</span></td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="btn btn-outline" title="Review"><i class="ph ph-eye"></i></button>
+                        <button class="btn btn-outline" title="Assign Inspector"><i class="ph ph-user-plus"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  <tr>
+                    <td><strong>#CMP-8841</strong></td>
+                    <td>
+                      <div class="visual-log">
+                        <img src="assets/violation2.png" alt="Evidence" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Westside Residential</span>
+                        <span class="td-sub">124 Maple Ave</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Oct 12, 08:15 AM</span>
+                        <span class="td-sub">By Hotline</span>
+                      </div>
+                    </td>
+                    <td><span class="badge-status status-verified">Verified</span></td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="btn btn-outline" title="Review"><i class="ph ph-eye"></i></button>
+                        <button class="btn btn-outline" title="Assign Inspector"><i class="ph ph-user-plus"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td><strong>#CMP-8840</strong></td>
+                    <td>
+                      <div class="visual-log placeholder-log">
+                        <i class="ph ph-image-broken"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Northville Zone</span>
+                        <span class="td-sub">89 River Rd</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Oct 11, 04:50 PM</span>
+                        <span class="td-sub">By Inspector</span>
+                      </div>
+                    </td>
+                    <td><span class="badge-status status-under-review">Under Review</span></td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="btn btn-outline" title="Review"><i class="ph ph-eye"></i></button>
+                        <button class="btn btn-outline" title="Assign Inspector"><i class="ph ph-user-plus"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td><strong>#CMP-8839</strong></td>
+                    <td>
+                      <div class="visual-log">
+                        <img src="assets/violation1.png" alt="Evidence" style="filter: grayscale(100%); opacity: 0.7;" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">East Port Hub</span>
+                        <span class="td-sub">Warehouse 4</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="td-content">
+                        <span class="td-title">Oct 10, 11:20 AM</span>
+                        <span class="td-sub">By Drone Survey</span>
+                      </div>
+                    </td>
+                    <td><span class="badge-status status-resolved">Resolved</span></td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="btn btn-outline" title="Review"><i class="ph ph-eye"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

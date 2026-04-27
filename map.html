@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Map View | Site Monitor</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <!-- Leaflet MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon">
+          <i class="ph ph-shield-check"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Site Monitor</span>
+          <span class="logo-subtitle">Department of Works</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <i class="ph ph-squares-four"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="complaints.html" class="nav-item">
+          <i class="ph ph-warning-circle"></i>
+          <span>Complaints</span>
+        </a>
+        <a href="map.html" class="nav-item active">
+          <i class="ph ph-map-trifold"></i>
+          <span>Map</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="ph ph-bell"></i>
+          <span>Notifications</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item">
+          <i class="ph ph-gear"></i>
+          <span>Settings</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content flex-col">
+      
+      <!-- Header -->
+      <header class="top-header">
+        <div class="search-bar">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="search" placeholder="Search complaint ID or location" />
+        </div>
+        <div class="header-actions">
+          <div class="action-icon">
+            <i class="ph ph-warning"></i>
+          </div>
+          <div class="action-icon has-badge">
+            <i class="ph ph-bell"></i>
+            <span class="badge">3</span>
+          </div>
+          <div class="admin-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&rounded=true" alt="Admin Avatar" class="avatar" />
+            <div class="admin-info">
+              <span class="admin-name">Admin User</span>
+              <span class="admin-role">Chief Inspector</span>
+            </div>
+            <i class="ph ph-caret-down"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Map View Content -->
+      <div class="map-view-container">
+        
+        <div class="side-panel card">
+          <div class="panel-section border-bottom">
+            <div class="page-header map-header">
+              <h1>City Violation Map</h1>
+              <p>Locational analytics for civic safety reports</p>
+            </div>
+            
+            <div class="map-layers-toggle">
+               <button class="layer-btn active" id="btnStreet">Street</button>
+               <button class="layer-btn" id="btnSatellite">Satellite</button>
+               <button class="layer-btn" id="btnHeatmap"><i class="ph ph-fire"></i> Heatmap</button>
+            </div>
+          </div>
+
+          <div class="panel-section border-bottom stats-quick">
+            <h3>Quick Statistics</h3>
+            <div class="quick-stat-row">
+              <span class="qs-label">Complaints in View</span>
+              <span class="qs-value" id="qsTotal">142</span>
+            </div>
+            <div class="quick-stat-row">
+              <span class="qs-label text-red">High-Risk Cases</span>
+              <span class="qs-value text-red bold">18</span>
+            </div>
+            <div class="quick-stat-row">
+              <span class="qs-label text-blue">Active Inspections</span>
+              <span class="qs-value text-blue bold">24</span>
+            </div>
+          </div>
+
+          <div class="panel-section flex-1 scrollable-panel">
+            <h3>Filter Complaints</h3>
+            
+            <div class="filter-group">
+              <label>Status</label>
+              <div class="filter-checkboxes">
+                <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot u-red"></span> High-risk violations</label>
+                <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot u-orange"></span> Pending review</label>
+                <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot u-blue"></span> Under investigation</label>
+                <label class="checkbox-item"><input type="checkbox" /> <span class="dot u-green"></span> Resolved cases</label>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label>Violation Type</label>
+              <select class="filter-select">
+                <option>All Types</option>
+                <option>No Green Net</option>
+                <option>No Worker Safety Gear</option>
+                <option>Unsafe Structure</option>
+                <option>Permit Issues</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>District / Zone</label>
+              <select class="filter-select">
+                <option>All Districts</option>
+                <option>Downtown</option>
+                <option>Northville</option>
+                <option>Westside</option>
+              </select>
+            </div>
+            
+            <div class="filter-group">
+              <label>Date Range</label>
+              <select class="filter-select">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+                <option>This Year</option>
+              </select>
+            </div>
+            
+            <button class="btn btn-primary w-full"><i class="ph ph-funnel"></i> Apply Filters</button>
+
+          </div>
+        </div>
+
+        <div class="main-map-area card">
+          <div id="fullCityMap" class="full-map"></div>
+        </div>
+
+      </div>
+      
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <!-- Leaflet Core -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Leaflet MarkerCluster -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Leaflet Heatmap -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
