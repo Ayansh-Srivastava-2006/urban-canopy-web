@@ -46,16 +46,16 @@
 
         <form id="auth-form">
           <div class="form-group" id="name-group" style="display: none;">
-            <label for="name-input">Full Name</label>
-            <input type="text" class="form-input" id="name-input" name="name" placeholder="e.g. Jane Doe" />
+            <label>Full Name</label>
+            <input type="text" class="form-input" id="name-input" placeholder="e.g. Jane Doe" />
           </div>
           <div class="form-group">
-            <label id="lbl-email" for="email-input">Department Email</label>
-            <input type="email" class="form-input" id="email-input" name="email" placeholder="e.g. name@department.gov" required />
+            <label id="lbl-email">Department Email</label>
+            <input type="email" class="form-input" placeholder="e.g. name@department.gov" required />
           </div>
           <div class="form-group">
-            <label for="password-input">Password / Access Key</label>
-            <input type="password" class="form-input" id="password-input" name="password" placeholder="Enter secure password" required />
+            <label>Password / Access Key</label>
+            <input type="password" class="form-input" placeholder="Enter secure password" required />
           </div>
           
           <button type="submit" class="login-btn-submit" id="auth-submit-btn">Sign In to Dashboard</button>
@@ -75,13 +75,12 @@
     import { auth } from './firebase-config.js';
     import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
 
-    // Expose functions to window so HTML onclick handlers can access them
     window.switchLoginTab = function(type, element) {
       document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
       element.classList.add('active');
       
       const emailLabel = document.getElementById('lbl-email');
-      const emailInput = document.getElementById('email-input');
+      const emailInput = document.querySelector('input[type="email"]');
       
       if (type === 'gov') {
         emailLabel.innerText = 'Department Email';
@@ -128,8 +127,8 @@
     const authForm = document.getElementById('auth-form');
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email-input').value;
-      const password = document.getElementById('password-input').value;
+      const email = document.querySelector('input[type="email"]').value;
+      const password = document.querySelector('input[type="password"]').value;
       const submitBtn = document.getElementById('auth-submit-btn');
       
       submitBtn.disabled = true;

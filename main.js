@@ -1,5 +1,5 @@
-import { db } from './firebase-config.js';
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+// Removed direct firestore imports as we use backend API
+const API_BASE = 'http://localhost:5000';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -253,23 +253,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertIcon = L.divIcon({ className: 'custom-div-icon', html: alertIconHtml, iconSize: [14, 14], iconAnchor: [7, 7] });
     const unitIcon = L.divIcon({ className: 'custom-div-icon', html: unitIconHtml, iconSize: [16, 16], iconAnchor: [8, 8] });
 
-    // Fetch live complaints from Firebase
+    // Fetch live complaints from Node.js Backend API
     const loadFirebaseMapMarkers = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "complaints"));
-        // If collection exists, plot the markers
-        if (!querySnapshot.empty) {
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.lat && data.lng) {
-              const safeId = escapeHtml(doc.id.substring(0, 5).toUpperCase());
+        // Dummy token for now; should come from Firebase Auth
+        const token = localStorage.getItem('auth_token') || 'dummy-token';
+        const res = await fetch(`${API_BASE}/api/reports`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const json = await res.json();
+        
+        if (json.success && json.data.length > 0) {
+          json.data.forEach((data) => {
+            if (data.location && data.location.lat && data.location.lng) {
+              const safeId = escapeHtml(data.id.substring(0, 5).toUpperCase());
               const safeDescription = escapeHtml(data.description || "Unsafe conditions reported.");
-              L.marker([data.lat, data.lng], { icon: alertIcon }).addTo(map)
+              L.marker([data.location.lat, data.location.lng], { icon: alertIcon }).addTo(map)
                 .bindPopup(`<b>Complaint ID: ${safeId}</b><br>${safeDescription}`);
             }
           });
         } else {
-           throw new Error("No reports initialized in Firebase");
+           throw new Error("No reports found from backend");
         }
       } catch (err) {
         console.warn("Firestore collection unavailable, loading mock bounds:", err.message);
@@ -352,20 +356,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadFullMapMarkers = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "complaints"));
-        if (!querySnapshot.empty) {
-          querySnapshot.forEach((doc) => {
-            const pt = doc.data();
-            if (pt.lat && pt.lng) {
+        const token = localStorage.getItem('auth_token') || 'dummy-token';
+        const res = await fetch(`${API_BASE}/api/reports`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const json = await res.json();
+        if (json.success && json.data.length > 0) {
+          json.data.forEach((pt) => {
+            if (pt.location && pt.location.lat && pt.location.lng) {
               const type = sanitizeClassToken(pt.type || 'investigating', 'investigating');
               const statusClass = sanitizeClassToken(pt.status || 'under-investigation', 'pending');
               const statusText = escapeHtml(String(pt.status || 'under-investigation').replace('-', ' '));
-              const safeImage = escapeHtml(getSafeImageUrl(pt.image || 'assets/violation1.png', 'assets/violation1.png'));
+              const safeImage = escapeHtml(getSafeImageUrl(pt.imageUrl || 'assets/violation1.png', 'assets/violation1.png'));
               const safeTitle = escapeHtml(pt.title || 'Unsafe Report');
-              const safeId = escapeHtml(doc.id.substring(0, 7).toUpperCase());
+              const safeId = escapeHtml(pt.id.substring(0, 7).toUpperCase());
 
-              heatLayerData.push([pt.lat, pt.lng, type === 'high' ? 1 : 0.5]);
-              const marker = L.marker([pt.lat, pt.lng], { icon: icons[type] || icons['pending'] });
+              heatLayerData.push([pt.location.lat, pt.location.lng, type === 'high' ? 1 : 0.5]);
+              const marker = L.marker([pt.location.lat, pt.location.lng], { icon: icons[type] || icons['pending'] });
               
               const popupHtml = `
                 <div class="popup-header">
@@ -382,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
         } else {
-           throw new Error("Empty DB");
+           throw new Error("Empty Backend DB");
         }
       } catch (err) {
         console.warn("Full map using dummy markers", err);
@@ -438,6 +445,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+  }
+
+  // Set up Socket.io connection for real-time updates
+  if (typeof io !== 'undefined') {
+    const socket = io(API_BASE);
+    socket.on('new_report', (data) => {
+      console.log('Real-time: New report received', data);
+      // We can dynamically add to map or show notification
+      // E.g. alert('New Report at ' + data.lat + ', ' + data.lng);
+    });
+    
+    socket.on('report_resolved', (data) => {
+      console.log('Real-time: Report resolved', data);
+    });
   }
 
 });
