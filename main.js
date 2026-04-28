@@ -1,5 +1,7 @@
+import { db } from './firebase-config.js';
+import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
 // Urban Canopy — main.js
-// No backend API needed; all UI is self-contained with mock data fallbacks.
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -158,13 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
     textMuted: '#64748b'
   };
 
+  let distChart, violChart, zChart, fChart;
+
   if (typeof Chart !== 'undefined') {
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.color = colors.textMuted;
 
     const distEl = document.getElementById('districtChart');
     if (distEl) {
-      new Chart(distEl.getContext('2d'), {
+      distChart = new Chart(distEl.getContext('2d'), {
         type: 'bar',
         data: { labels: [], datasets: [{ label: 'Reports', data: [], backgroundColor: colors.green, borderRadius: 4, barPercentage: 0.6 }] },
         options: {
@@ -177,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const violEl = document.getElementById('violationChart');
     if (violEl) {
-      new Chart(violEl.getContext('2d'), {
+      violChart = new Chart(violEl.getContext('2d'), {
         type: 'doughnut',
         data: { labels: [], datasets: [{ data: [], backgroundColor: [colors.red, colors.orange, colors.green, colors.blue, colors.textMuted], borderWidth: 0, hoverOffset: 4 }] },
         options: {
@@ -189,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const zoneEl = document.getElementById('zoneChart');
     if (zoneEl) {
-      new Chart(zoneEl.getContext('2d'), {
+      zChart = new Chart(zoneEl.getContext('2d'), {
         type: 'line',
         data: { labels: [], datasets: [{ label: 'Reports', data: [], borderColor: colors.green, backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.4 }] },
         options: {
@@ -202,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fleetEl = document.getElementById('fleetChart');
     if (fleetEl) {
-      new Chart(fleetEl.getContext('2d'), {
+      fChart = new Chart(fleetEl.getContext('2d'), {
         type: 'bar',
         data: { labels: [], datasets: [{ label: 'Count', data: [], backgroundColor: [colors.orange, colors.green, colors.blue], borderRadius: 4 }] },
         options: {
@@ -215,62 +219,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================
-  // 5. LEAFLET MAPS (safe — wrapped in typeof check)
+  // 5. LEAFLET MAPS SETUP
   // =========================================================
+  let dashMap = null;
+  let dashMarkerLayer = null;
+  let fullMap = null;
+  let fullMapMarkers = null;
+  let heatLayer = null;
+  let heatMode = false;
+  
+  const createDotIcon = (dotColor) => L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div style="background-color: ${dotColor}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7]
+  });
+
+  const icons = {
+    high: createDotIcon(colors.red),
+    pending: createDotIcon(colors.orange),
+    investigating: createDotIcon(colors.blue),
+    resolved: createDotIcon(colors.green)
+  };
+
   if (typeof L !== 'undefined') {
-
-    const defaultCenter = [28.366, 77.540];
-
-    // --- Helper: create dot icon by color ---
-    const createDotIcon = (dotColor) => L.divIcon({
-      className: 'custom-div-icon',
-      html: `<div style="background-color: ${dotColor}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>`,
-      iconSize: [14, 14], iconAnchor: [7, 7]
-    });
-
-    const alertIcon = createDotIcon(colors.red);
-    const unitIconHtml = `<div style="background-color: ${colors.blue}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"><div style="width: 6px; height: 6px; background-color: white; border-radius: 50%"></div></div>`;
-    const unitIcon = L.divIcon({ className: 'custom-div-icon', html: unitIconHtml, iconSize: [16, 16], iconAnchor: [8, 8] });
-
-    const icons = {
-      high: createDotIcon(colors.red),
-      pending: createDotIcon(colors.orange),
-      investigating: createDotIcon(colors.blue),
-      resolved: createDotIcon(colors.green)
-    };
-
-    // Mock data for maps
-    const mockComplaints = [
-      [40.7228, -74.0060], [40.7100, -74.0150], [40.7300, -73.9900], [40.7050, -74.0100], [40.7150, -73.9950]
-    ];
-    const mockUnits = [
-      [40.7180, -74.0020], [40.7250, -73.9950], [40.7080, -74.0120]
-    ];
-    const mockFullMapData = [
-      { coord: [40.7228, -74.0060], type: 'high', title: 'No Green Net', status: 'high-risk', id: '#CMP-8842', image: 'assets/violation1.png' },
-      { coord: [40.7100, -74.0150], type: 'pending', title: 'Unsafe Structure', status: 'pending', id: '#CMP-8840', image: 'assets/violation2.png' },
-      { coord: [40.7300, -73.9900], type: 'investigating', title: 'No Worker Safety Gear', status: 'under-investigation', id: '#CMP-8839', image: 'assets/violation1.png' },
-      { coord: [40.7050, -74.0100], type: 'resolved', title: 'Permit Issues', status: 'resolved', id: '#CMP-8830', image: 'assets/violation2.png' }
-    ];
-
-    // --- Dashboard mini-map ---
     const mapEl = document.getElementById('cityMap');
     if (mapEl) {
-      const dashMap = L.map('cityMap', { zoomControl: false }).setView([40.7128, -74.0060], 13);
+      dashMap = L.map('cityMap', { zoomControl: false }).setView([40.7128, -74.0060], 13);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 20
       }).addTo(dashMap);
       L.control.zoom({ position: 'bottomright' }).addTo(dashMap);
-
-      mockComplaints.forEach((coord, i) => {
-        L.marker(coord, { icon: alertIcon }).addTo(dashMap).bindPopup(`<b>Complaint #${400 + i}</b><br>Unsafe conditions reported.`);
-      });
-      mockUnits.forEach((coord, i) => {
-        L.marker(coord, { icon: unitIcon }).addTo(dashMap).bindPopup(`<b>Unit ${i + 1}</b><br>En route to inspection.`);
-      });
+      dashMarkerLayer = L.layerGroup().addTo(dashMap);
     }
 
-    // --- Full City Map ---
     const fullMapEl = document.getElementById('fullCityMap');
     if (fullMapEl) {
       const streetLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -280,45 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
         attribution: '&copy; Esri', maxZoom: 20
       });
 
-      const fullMap = L.map('fullCityMap', { zoomControl: false, layers: [streetLayer] }).setView([40.7300, -74.0000], 13);
+      fullMap = L.map('fullCityMap', { zoomControl: false, layers: [streetLayer] }).setView([40.7300, -74.0000], 13);
       L.control.zoom({ position: 'bottomright' }).addTo(fullMap);
-
-      const fullMapMarkers = L.markerClusterGroup({ spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true });
+      fullMapMarkers = L.markerClusterGroup({ spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true });
       fullMap.addLayer(fullMapMarkers);
 
-      const heatLayerData = [];
-      let heatMode = false;
-      let heatLayer = null;
-
-      // Populate full map with mock data
-      const bounds = [];
-      mockFullMapData.forEach(pt => {
-        const safeStatusClass = sanitizeClassToken(pt.status, 'pending');
-        const safeStatusText = escapeHtml(String(pt.status).replace(/-/g, ' '));
-        const safeTitle = escapeHtml(pt.title);
-        const safeImage = escapeHtml(getSafeImageUrl(pt.image, 'assets/violation1.png'));
-        const safeId = escapeHtml(pt.id);
-
-        heatLayerData.push([pt.coord[0], pt.coord[1], pt.type === 'high' ? 1 : 0.5]);
-
-        const marker = L.marker(pt.coord, { icon: icons[pt.type] || icons.pending });
-        marker.bindPopup(`
-          <div class="popup-header">
-            <span class="popup-id">${safeId}</span>
-            <span class="popup-status ${safeStatusClass}">${safeStatusText}</span>
-          </div>
-          <img src="${safeImage}" class="popup-image" alt="Evidence" onerror="this.src='https://placehold.co/240x120?text=No+Image'" />
-          <div class="popup-detail"><i class="ph ph-warning-circle"></i> <span>${safeTitle}</span></div>
-          <div class="popup-detail"><i class="ph ph-map-pin"></i> <span>Live location pinned</span></div>
-          <button class="btn btn-primary w-full popup-btn"><i class="ph ph-user-plus"></i> Assign Inspector</button>
-        `, { className: 'custom-popup' });
-        fullMapMarkers.addLayer(marker);
-        bounds.push(pt.coord);
-      });
-
-      if (bounds.length > 0) fullMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-
-      // Layer toggle buttons
       const btnStreet = document.getElementById('btnStreet');
       const btnSatellite = document.getElementById('btnSatellite');
       const btnHeatmap = document.getElementById('btnHeatmap');
@@ -342,8 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btnHeatmap && typeof L.heatLayer !== 'undefined') {
         btnHeatmap.addEventListener('click', (e) => {
           heatMode = !heatMode;
-          if (heatMode) {
-            heatLayer = L.heatLayer(heatLayerData, { radius: 25, blur: 15, maxZoom: 14, gradient: { 0.4: 'blue', 0.6: 'lime', 1: 'red' } });
+          // Note: heatLayerData is maintained below in the data rendering function
+          if (heatMode && window.currentHeatLayerData) {
+            heatLayer = L.heatLayer(window.currentHeatLayerData, { radius: 25, blur: 15, maxZoom: 14, gradient: { 0.4: 'blue', 0.6: 'lime', 1: 'red' } });
             fullMap.addLayer(heatLayer);
             fullMap.removeLayer(fullMapMarkers);
             e.target.classList.add('active');
@@ -355,20 +303,229 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     }
-
-  } // end Leaflet check
-
-  // =========================================================
-  // 6. RECENT ACTIVITY & NOTIFICATIONS (static placeholder)
-  // =========================================================
-  const activityList = document.getElementById('recent-activity-list');
-  if (activityList) {
-    activityList.innerHTML = '<div class="img-notif-card" style="justify-content:center;color:var(--text-muted);font-size:13px;">No reports yet.</div>';
   }
 
-  const notifList = document.getElementById('notifications-list');
-  if (notifList) {
-    notifList.innerHTML = '<div class="img-notif-card" style="justify-content:center;color:var(--text-muted);font-size:13px;">No activity yet.</div>';
+  // =========================================================
+  // 6. REALTIME FIREBASE DATA INTEGRATION
+  // =========================================================
+  const renderData = (reports) => {
+    // Basic stats
+    const total = reports.length;
+    const pending = reports.filter(r => r.status === 'pending' || !r.status).length;
+    const verified = reports.filter(r => r.status === 'verified').length;
+    const resolved = reports.filter(r => r.status === 'resolved' || r.status === 'planted').length;
+    const high = reports.filter(r => r.severity === 'High').length;
+    const medium = reports.filter(r => r.severity === 'Medium').length;
+    const low = reports.filter(r => r.severity === 'Low').length;
+
+    // Update Dashboard DOM elements
+    updateEl('stat-total', total);
+    updateEl('stat-pending', pending);
+    updateEl('stat-verified', verified);
+    updateEl('stat-planted', resolved);
+    updateEl('notification-badge', pending > 0 ? pending : '');
+    
+    // Update Central Registry stats
+    updateEl('stat-registry-total', total);
+    updateEl('stat-critical', high);
+    updateEl('stat-medium', medium);
+    updateEl('stat-accessible', low);
+    
+    // Map stats
+    updateEl('qsTotal', total);
+    updateEl('qsHighRisk', high);
+
+    // Update Charts
+    if (distChart) {
+      const locationMap = {};
+      reports.forEach(r => { const key = r.address ? r.address.split(',')[0] : 'Unknown'; locationMap[key] = (locationMap[key] || 0) + 1; });
+      const entries = Object.entries(locationMap).sort((a,b) => b[1]-a[1]).slice(0,6);
+      distChart.data.labels = entries.map(e => e[0]);
+      distChart.data.datasets[0].data = entries.map(e => e[1]);
+      distChart.update();
+    }
+    if (violChart) {
+      violChart.data.labels = ['High', 'Medium', 'Low'];
+      violChart.data.datasets[0].data = [high, medium, low];
+      violChart.update();
+    }
+    if (zChart) {
+      // Very basic timeline simulation since we only have raw timestamps
+      const timeline = {};
+      reports.forEach(r => {
+        const d = r.timestamp ? new Date(r.timestamp).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : 'N/A';
+        timeline[d] = (timeline[d] || 0) + 1;
+      });
+      const entries = Object.entries(timeline).slice(-7);
+      zChart.data.labels = entries.map(e => e[0]);
+      zChart.data.datasets[0].data = entries.map(e => e[1]);
+      zChart.update();
+    }
+    if (fChart) {
+      fChart.data.labels = ['Pending', 'Verified', 'Resolved'];
+      fChart.data.datasets[0].data = [pending, verified, resolved];
+      fChart.update();
+    }
+
+    // Update Table
+    const tbody = document.getElementById('reports-table-body');
+    if (tbody) {
+      tbody.innerHTML = '';
+      if (reports.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted);">No reports yet.</td></tr>';
+      } else {
+        reports.forEach(r => {
+          const safeId = escapeHtml((r.id || '').substring(0, 7).toUpperCase());
+          const safeAddr = escapeHtml(r.address || r.location || 'Unknown location');
+          const safeSev = escapeHtml(r.severity || 'Medium');
+          const safeStatus = escapeHtml(r.status || 'pending');
+          const statusClass = sanitizeClassToken(safeStatus, 'pending');
+          const imgSrc = escapeHtml(getSafeImageUrl(r.image || r.imageUrl, 'assets/violation1.png'));
+          const dateStr = escapeHtml(formatDate(r.timestamp));
+          
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-status', safeStatus);
+          tr.innerHTML = `
+            <td><strong>#CMP-${safeId}</strong></td>
+            <td><div class="visual-log"><img src="${imgSrc}" alt="Evidence" onerror="this.style.display='none'" /></div></td>
+            <td><div class="td-content"><span class="td-title">${safeAddr}</span></div></td>
+            <td><div class="td-content"><span class="td-title">${dateStr}</span></div></td>
+            <td><span class="badge-status status-${safeSev.toLowerCase() === 'high' ? 'red' : 'orange'}">${safeSev}</span></td>
+            <td><span class="badge-status status-${statusClass}">${safeStatus}</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-outline" title="Review"><i class="ph ph-eye"></i></button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    // Update Recent Activity & Notifications
+    const actList = document.getElementById('recent-activity-list');
+    const notList = document.getElementById('notifications-list');
+    
+    if (actList) actList.innerHTML = '';
+    if (notList) notList.innerHTML = '';
+
+    if (reports.length === 0) {
+      const msg = '<div class="img-notif-card" style="justify-content:center;color:var(--text-muted);font-size:13px;">No reports yet.</div>';
+      if (actList) actList.innerHTML = msg;
+      if (notList) notList.innerHTML = msg;
+    } else {
+      reports.slice(0, 10).forEach((r, idx) => {
+        const timeAgo = formatTimeAgo(r.timestamp);
+        const iconClass = r.severity === 'High' ? 'light-yellow' : 'light-green';
+        const iconPh = r.severity === 'High' ? 'warning' : 'leaf';
+        const title = r.status === 'pending' ? 'New Patch Report' : r.status === 'verified' ? 'Patch Verified' : 'Planting Confirmed';
+        
+        const html = `
+          <div class="img-notif-icon ${iconClass}"><i class="ph ph-${iconPh}"></i></div>
+          <div class="img-notif-content">
+            <h4>${title} — ${escapeHtml(r.severity || 'N/A')}</h4>
+            <p>${escapeHtml(r.address || 'Unknown location')}</p>
+            <span class="time">${timeAgo.toUpperCase()}</span>
+          </div>
+        `;
+        
+        if (actList && idx < 5) {
+          const card = document.createElement('div');
+          card.className = 'img-notif-card';
+          card.innerHTML = html;
+          actList.appendChild(card);
+        }
+        if (notList) {
+          const card = document.createElement('div');
+          card.className = 'img-notif-card';
+          card.innerHTML = html;
+          notList.appendChild(card);
+        }
+      });
+    }
+
+    // Update Maps
+    if (dashMap && dashMarkerLayer) {
+      dashMarkerLayer.clearLayers();
+      const bounds = [];
+      reports.forEach(r => {
+        const lat = r.lat || r.latitude;
+        const lng = r.lng || r.longitude;
+        if (lat && lng) {
+          const m = L.marker([lat, lng], { icon: icons[r.severity === 'High' ? 'high' : 'pending'] })
+            .bindPopup(`<b>#CMP-${escapeHtml(r.id.substring(0,5).toUpperCase())}</b><br>${escapeHtml(r.address)}`);
+          dashMarkerLayer.addLayer(m);
+          bounds.push([lat, lng]);
+        }
+      });
+      if (bounds.length > 0) dashMap.fitBounds(bounds, { padding: [20, 20], maxZoom: 14 });
+    }
+
+    if (fullMap && fullMapMarkers) {
+      fullMapMarkers.clearLayers();
+      const heatData = [];
+      const bounds = [];
+      reports.forEach(r => {
+        const lat = r.lat || r.latitude;
+        const lng = r.lng || r.longitude;
+        if (lat && lng) {
+          const type = r.severity === 'High' ? 'high' : r.status === 'resolved' ? 'resolved' : 'pending';
+          const safeId = escapeHtml((r.id||'').substring(0,7).toUpperCase());
+          const safeAddr = escapeHtml(r.address || '');
+          const statusClass = sanitizeClassToken(r.status, 'pending');
+          const imgSrc = escapeHtml(getSafeImageUrl(r.image || r.imageUrl, 'assets/violation1.png'));
+          
+          heatData.push([lat, lng, r.severity === 'High' ? 1 : 0.5]);
+          bounds.push([lat, lng]);
+
+          const m = L.marker([lat, lng], { icon: icons[type] });
+          m.bindPopup(`
+            <div class="popup-header">
+              <span class="popup-id">#CMP-${safeId}</span>
+              <span class="popup-status ${statusClass}">${escapeHtml(r.status || 'Pending')}</span>
+            </div>
+            <img src="${imgSrc}" class="popup-image" alt="Evidence" onerror="this.style.display='none'" />
+            <div class="popup-detail"><i class="ph ph-warning-circle"></i> <span>${escapeHtml(r.title || r.severity || 'Report')}</span></div>
+            <div class="popup-detail"><i class="ph ph-map-pin"></i> <span>${safeAddr}</span></div>
+          `, { className: 'custom-popup' });
+          fullMapMarkers.addLayer(m);
+        }
+      });
+      
+      window.currentHeatLayerData = heatData;
+      if (bounds.length > 0) fullMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      
+      if (heatMode && heatLayer && fullMap.hasLayer(heatLayer)) {
+        fullMap.removeLayer(heatLayer);
+        heatLayer = L.heatLayer(heatData, { radius: 25, blur: 15, maxZoom: 14, gradient: { 0.4: 'blue', 0.6: 'lime', 1: 'red' } });
+        fullMap.addLayer(heatLayer);
+      }
+    }
+  };
+
+  // Connect to Firestore Realtime Updates
+  try {
+    onSnapshot(collection(db, "complaints"), (snapshot) => {
+      const records = [];
+      snapshot.forEach(doc => {
+        records.push({ id: doc.id, ...doc.data() });
+      });
+      // Sort by newest first
+      records.sort((a, b) => {
+        const t1 = a.timestamp || a.createdAt || 0;
+        const t2 = b.timestamp || b.createdAt || 0;
+        return t2 - t1;
+      });
+      renderData(records);
+    }, (error) => {
+      console.error("Firestore error:", error);
+      // Fallback message if DB fails
+      const tbody = document.getElementById('reports-table-body');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--red-main);">Error loading data: ${escapeHtml(error.message)}</td></tr>`;
+    });
+  } catch (err) {
+    console.error("Failed to initialize Firebase snapshot:", err);
   }
 
 });
