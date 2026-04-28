@@ -2,15 +2,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
+import { ENV } from "./env.js";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBnqigdz1UKUktnRH8JGLbqrf5xnPBGr8A",
-  authDomain: "urban-canopy-solution.firebaseapp.com",
-  databaseURL: "https://urban-canopy-solution-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "urban-canopy-solution",
-  storageBucket: "urban-canopy-solution.firebasestorage.app",
-  messagingSenderId: "162241789831",
-  appId: "1:162241789831:web:666081e34135a81f6e1d22",
-  measurementId: "G-2YHSM70NPK"
+  apiKey: ENV.FIREBASE_API_KEY,
+  authDomain: ENV.FIREBASE_AUTH_DOMAIN,
+  databaseURL: ENV.FIREBASE_DATABASE_URL,
+  projectId: ENV.FIREBASE_PROJECT_ID,
+  storageBucket: ENV.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: ENV.FIREBASE_MESSAGING_SENDER_ID,
+  appId: ENV.FIREBASE_APP_ID,
+  measurementId: ENV.FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
