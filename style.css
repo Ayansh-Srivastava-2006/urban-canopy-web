@@ -8,9 +8,9 @@
   --text-main: #0f172a;
   --text-muted: #64748b;
   
-  --blue-primary: #2563eb;
-  --blue-hover: #1d4ed8;
-  --blue-light: #eff6ff;
+  --blue-primary: #059669;
+  --blue-hover: #047857;
+  --blue-light: #ecfdf5;
   
   --green-main: #10b981;
   --green-light: #ecfdf5;
@@ -632,8 +632,8 @@ body {
 
 /* Login Page Specific Styles */
 .login-layout { display: flex; height: 100vh; width: 100vw; background-color: white; }
-.login-left { flex: 1; background: linear-gradient(135deg, #0E1F40 0%, #21355A 100%); display: flex; flex-direction: column; justify-content: center; padding: 60px; color: white; position: relative; overflow: hidden; }
-.login-left::before { content: ""; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0) 70%); top: -100px; left: -100px; }
+.login-left { flex: 1; background: linear-gradient(135deg, #064E3B 0%, #065F46 100%); display: flex; flex-direction: column; justify-content: center; padding: 60px; color: white; position: relative; overflow: hidden; }
+.login-left::before { content: ""; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(5,150,105,0.15) 0%, rgba(5,150,105,0) 70%); top: -100px; left: -100px; }
 .login-left-content { z-index: 2; max-width: 480px; }
 .login-left-content h1 { font-size: 42px; font-weight: 700; margin-bottom: 24px; line-height: 1.2; }
 .login-left-content p { font-size: 18px; color: #94A3B8; line-height: 1.6; }
