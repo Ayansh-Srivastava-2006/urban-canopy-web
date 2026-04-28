@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Urban Canopy | Green Mission Control</title>
+  <title>System SPA | Site Monitor</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,12 +27,12 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo-icon" style="position: relative; display: flex; align-items: center; justify-content: center;">
-          <i class="ph ph-tree" style="position: absolute; z-index: 1;"></i>
+          <i class="ph ph-shield-check" style="position: absolute; z-index: 1;"></i>
           <img src="assets/logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 2;" onerror="this.style.display='none'" />
         </div>
         <div class="logo-text">
-          <span class="logo-title">Urban Canopy</span>
-          <span class="logo-subtitle">Green Mission Control</span>
+          <span class="logo-title">Site Monitor</span>
+          <span class="logo-subtitle">Department of Works</span>
         </div>
       </div>
       
@@ -41,9 +41,9 @@
           <i class="ph ph-squares-four"></i>
           <span>Dashboard</span>
         </a>
-        <a href="#reports" class="nav-item" data-target="view-complaints">
-          <i class="ph ph-leaf"></i>
-          <span>Patch Reports</span>
+        <a href="#complaints" class="nav-item" data-target="view-complaints">
+          <i class="ph ph-warning-circle"></i>
+          <span>Central Registry</span>
         </a>
         <a href="#map" class="nav-item" data-target="view-map">
           <i class="ph ph-map-trifold"></i>
@@ -70,7 +70,7 @@
       <header class="top-header">
         <div class="search-bar">
           <i class="ph ph-magnifying-glass"></i>
-          <input type="search" placeholder="Search reports, locations, patches..." />
+          <input type="search" placeholder="Search complaints, districts, inspectors..." />
         </div>
         <div class="header-actions">
           <div class="action-icon">
@@ -78,13 +78,13 @@
           </div>
           <div class="action-icon has-badge">
             <i class="ph ph-bell"></i>
-            <span class="badge" id="notification-badge">0</span>
+            <span class="badge">3</span>
           </div>
           <div class="admin-profile" id="profileDropdownBtn">
-            <img src="https://ui-avatars.com/api/?name=Admin+User&background=059669&color=fff&rounded=true" alt="Admin Avatar" class="avatar" />
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&rounded=true" alt="Admin Avatar" class="avatar" />
             <div class="admin-info">
               <span class="admin-name">Admin User</span>
-              <span class="admin-role">Green Officer</span>
+              <span class="admin-role">Chief Inspector</span>
             </div>
             <i class="ph ph-caret-down"></i>
 
@@ -92,12 +92,12 @@
             <div class="profile-dropdown hidden" id="profileDropdownMenu">
               <div class="dropdown-header">
                 <strong>Admin User</strong>
-                <span>Green Officer</span>
+                <span>Chief Inspector</span>
               </div>
               <ul class="dropdown-list">
                 <li><a href="#profile" class="spa-link" data-target="view-profile"><i class="ph ph-user"></i> My Profile</a></li>
-                <li><a href="#notifications" class="spa-link" data-target="view-notifications"><i class="ph ph-activity"></i> Activity</a></li>
-                <li><a href="#settings" class="spa-link" data-target="view-settings"><i class="ph ph-gear"></i> Settings</a></li>
+                <li><a href="#notifications" class="spa-link" data-target="view-notifications"><i class="ph ph-activity"></i> Profile Activity</a></li>
+                <li><a href="#settings" class="spa-link" data-target="view-settings"><i class="ph ph-gear"></i> Account Settings</a></li>
                 <li class="logout-item"><a href="index.html"><i class="ph ph-sign-out"></i> Sign Out</a></li>
               </ul>
             </div>
@@ -113,56 +113,56 @@
         <div class="dashboard-scroll-area">
           <div class="dashboard-container">
             <div class="page-header">
-              <h1>Urban Canopy Dashboard</h1>
-              <p>Real-time overview of green patch reports and planting progress.</p>
+              <h1>Municipal Dashboard</h1>
+              <p>Overview of construction safety complaints and enforcement.</p>
             </div>
 
             <div class="stats-grid">
               <div class="stat-card">
                 <div class="stat-header">
-                  <span class="stat-title">Total Reports</span>
+                  <span class="stat-title">Total Complaints</span>
                   <i class="ph ph-files stat-icon blue"></i>
                 </div>
-                <div class="stat-value" id="stat-total">—</div>
+                <div class="stat-value">1,284</div>
                 <div class="stat-trend positive">
-                  <i class="ph ph-leaf"></i>
-                  <span>Patches discovered</span>
+                  <i class="ph ph-trend-down"></i>
+                  <span>-5.4% from last month</span>
                 </div>
               </div>
 
               <div class="stat-card">
                 <div class="stat-header">
-                  <span class="stat-title">Pending Verification</span>
+                  <span class="stat-title">Pending Review</span>
                   <i class="ph ph-hourglass-high stat-icon orange"></i>
                 </div>
-                <div class="stat-value" id="stat-pending">—</div>
+                <div class="stat-value">342</div>
                 <div class="stat-trend negative">
-                  <i class="ph ph-clock"></i>
-                  <span>Awaiting NDVI check</span>
+                  <i class="ph ph-trend-up"></i>
+                  <span>+12.1% from last month</span>
                 </div>
               </div>
 
               <div class="stat-card">
                 <div class="stat-header">
-                  <span class="stat-title">Verified Bare Patches</span>
+                  <span class="stat-title">Verified Violations</span>
+                  <i class="ph ph-siren stat-icon red"></i>
+                </div>
+                <div class="stat-value">845</div>
+                <div class="stat-trend positive">
+                  <i class="ph ph-trend-down"></i>
+                  <span>-2.3% from last month</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Resolved Cases</span>
                   <i class="ph ph-check-circle stat-icon green"></i>
                 </div>
-                <div class="stat-value" id="stat-verified">—</div>
-                <div class="stat-trend positive">
-                  <i class="ph ph-seal-check"></i>
-                  <span>Confirmed bare soil</span>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-header">
-                  <span class="stat-title">Plantings Done</span>
-                  <i class="ph ph-tree stat-icon green"></i>
-                </div>
-                <div class="stat-value" id="stat-planted">—</div>
+                <div class="stat-value">2,109</div>
                 <div class="stat-trend positive">
                   <i class="ph ph-trend-up"></i>
-                  <span>Trees planted</span>
+                  <span>+8.7% from last month</span>
                 </div>
               </div>
             </div>
@@ -170,7 +170,7 @@
             <div class="analytics-grid">
               <div class="chart-card wide">
                 <div class="card-header">
-                  <h3>Reports by Location</h3>
+                  <h3>Complaints by District</h3>
                   <button class="btn-icon"><i class="ph ph-dots-three-outline-vertical"></i></button>
                 </div>
                 <div class="card-body">
@@ -180,7 +180,7 @@
               
               <div class="chart-card">
                 <div class="card-header">
-                  <h3>Severity Breakdown</h3>
+                  <h3>Violation Types</h3>
                   <button class="btn-icon"><i class="ph ph-dots-three-outline-vertical"></i></button>
                 </div>
                 <div class="card-body">
@@ -196,26 +196,38 @@
                    <i class="ph ph-dots-three"></i>
                  </div>
                  
-                 <div class="notif-list" id="recent-activity-list">
-                   <!-- Populated dynamically by main.js -->
-                   <div class="img-notif-card" style="justify-content: center; color: var(--text-muted); font-size: 13px;">
-                     Loading reports...
+                 <div class="notif-list">
+                   <div class="img-notif-card">
+                     <div class="img-notif-icon dark"><i class="ph ph-files"></i></div>
+                     <div class="img-notif-content">
+                       <h4>New Violation Verified</h4>
+                       <p>Illegal construction at 442 West Oak Blvd.</p>
+                       <span class="time">12 MINUTES AGO</span>
+                     </div>
+                   </div>
+
+                   <div class="img-notif-card">
+                     <div class="img-notif-icon light-green"><i class="ph ph-check"></i></div>
+                     <div class="img-notif-content">
+                       <h4>Case Resolved</h4>
+                       <p>Sanitation issue cleared at Site 44.</p>
+                       <span class="time">2 HOURS AGO</span>
+                     </div>
                    </div>
                  </div>
 
                  <div class="img-notif-footer" style="padding-top: 8px;">
-                   <span>View All Reports</span>
+                   <span>View All Audit Logs</span>
                    <button class="img-notif-fab" style="width: 36px; height: 36px; font-size: 16px;"><i class="ph ph-plus"></i></button>
                  </div>
               </div>
 
               <div class="map-card">
                 <div class="card-header">
-                  <h3>Report Locations</h3>
+                  <h3>Active Response Units</h3>
                   <div class="map-legend">
-                    <span class="legend-item"><span class="dot u-red"></span> High</span>
-                    <span class="legend-item"><span class="dot" style="background-color: var(--orange-main);"></span> Medium</span>
-                    <span class="legend-item"><span class="dot" style="background-color: var(--green-main);"></span> Low</span>
+                    <span class="legend-item"><span class="dot u-blue"></span> Unit</span>
+                    <span class="legend-item"><span class="dot u-red"></span> Complaint</span>
                   </div>
                 </div>
                 <div class="map-container" id="cityMap">
@@ -228,49 +240,60 @@
         </div>
       </div>
 
-      <!-- 2. PATCH REPORTS VIEW -->
+      <!-- 2. COMPLAINTS VIEW -->
       <div id="view-complaints" class="view-section hidden">
         <div class="dashboard-scroll-area">
           <div class="dashboard-container max-width-large">
             
             <div class="page-header header-flex">
               <div>
-                <h1>Patch Reports Registry</h1>
-                <p>All citizen-submitted green patch reports</p>
+                <h1>Central Registry</h1>
+                <p>Monitoring civic reports across city sectors</p>
               </div>
               <div class="header-buttons">
                 <button class="btn btn-secondary"><i class="ph ph-export"></i> Export Data</button>
+                <button class="btn btn-primary"><i class="ph ph-plus"></i> New Report</button>
               </div>
             </div>
 
             <div class="stats-grid grid-6">
               <div class="stat-card">
-                <div class="stat-header"><span class="stat-title">Total Reports</span></div>
-                <div class="stat-value" id="stat-registry-total">—</div>
-                <div class="stat-trend positive"><i class="ph ph-leaf"></i><span>All submissions</span></div>
+                <div class="stat-header"><span class="stat-title">Resolution Velocity</span></div>
+                <div class="stat-value">2.4 Days</div>
+                <div class="stat-trend positive"><i class="ph ph-trend-down"></i><span>-12% from last month</span></div>
               </div>
               <div class="stat-card">
-                <div class="stat-header"><span class="stat-title">High Severity</span></div>
-                <div class="stat-value" id="stat-critical" style="color: var(--red-main)">—</div>
-                <div class="stat-trend negative"><i class="ph ph-warning"></i><span>Urgent patches</span></div>
+                <div class="stat-header"><span class="stat-title">Active Cases</span></div>
+                <div class="stat-value">1,187</div>
+                <div class="stat-trend negative"><i class="ph ph-trend-up"></i><span>+4% from last month</span></div>
               </div>
               <div class="stat-card">
-                <div class="stat-header"><span class="stat-title">Medium Severity</span></div>
-                <div class="stat-value" id="stat-medium" style="color: var(--orange-main)">—</div>
-                <div class="stat-trend positive"><i class="ph ph-info"></i><span>Moderate priority</span></div>
+                <div class="stat-header"><span class="stat-title">Critical Alerts</span></div>
+                <div class="stat-value" style="color: var(--red-main)">24</div>
+                <div class="stat-trend positive"><i class="ph ph-trend-down"></i><span>-2 from last week</span></div>
               </div>
               <div class="stat-card">
-                <div class="stat-header"><span class="stat-title">Accessible Sites</span></div>
-                <div class="stat-value" id="stat-accessible" style="color: var(--green-main)">—</div>
-                <div class="stat-trend positive"><i class="ph ph-check"></i><span>Easy access</span></div>
+                <div class="stat-header"><span class="stat-title">Zone Efficiency</span></div>
+                <div class="stat-value">94.2%</div>
+                <div class="stat-trend positive"><i class="ph ph-trend-up"></i><span>Target: >90%</span></div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header"><span class="stat-title">Priority Queue</span></div>
+                <div class="stat-value" style="color: var(--orange-main)">8</div>
+                <div class="stat-trend negative"><i class="ph ph-trend-up"></i><span>Unassigned High-Risk</span></div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header"><span class="stat-title">System Health Status</span></div>
+                <div class="stat-value" style="color: var(--green-main)">Online</div>
+                <div class="stat-trend positive"><i class="ph ph-check"></i><span>All systems operational</span></div>
               </div>
             </div>
 
             <div class="panels-grid">
               <div class="chart-card">
                 <div class="card-header">
-                  <h3>Reports Timeline</h3>
-                  <span class="subtitle-badge">Submissions Over Time</span>
+                  <h3>Zone Intelligence</h3>
+                  <span class="subtitle-badge">Complaints by Sector</span>
                 </div>
                 <div class="card-body">
                   <canvas id="zoneChart"></canvas>
@@ -278,8 +301,8 @@
               </div>
               <div class="chart-card">
                 <div class="card-header">
-                  <h3>Status Overview</h3>
-                  <span class="subtitle-badge">Report Status</span>
+                  <h3>Live Fleet Deployment</h3>
+                  <span class="subtitle-badge">Active Units</span>
                 </div>
                 <div class="card-body">
                   <canvas id="fleetChart"></canvas>
@@ -290,10 +313,11 @@
             <div class="card table-card">
               <div class="table-header">
                 <div class="tabs">
-                  <button class="tab-btn active" data-filter="all">All</button>
-                  <button class="tab-btn" data-filter="pending">Pending</button>
-                  <button class="tab-btn" data-filter="verified">Verified</button>
-                  <button class="tab-btn" data-filter="planted">Planted</button>
+                  <button class="tab-btn active">All</button>
+                  <button class="tab-btn">Pending</button>
+                  <button class="tab-btn">Under Review</button>
+                  <button class="tab-btn">Verified</button>
+                  <button class="tab-btn">Resolved</button>
                 </div>
                 <div class="table-actions">
                   <div class="search-bar small">
@@ -308,12 +332,26 @@
                 <table class="complaint-table">
                   <thead>
                     <tr>
-                      <th>Report ID</th><th>Photo</th><th>Location</th><th>Date Submitted</th><th>Severity</th><th>Status</th><th>Actions</th>
+                      <th>Complaint ID</th><th>Visual Log</th><th>Location</th><th>Date Submitted</th><th>Status</th><th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody id="reports-table-body">
+                  <tbody>
                     <tr>
-                      <td colspan="7" style="text-align: center; padding: 32px; color: var(--text-muted);">Loading reports from database...</td>
+                      <td><strong>#CMP-8842</strong></td>
+                      <td><div class="visual-log"><img src="assets/violation1.png" alt="Evidence" /></div></td>
+                      <td>
+                        <div class="td-content"><span class="td-title">Downtown Sector</span><span class="td-sub">400 Broad St</span></div>
+                      </td>
+                      <td>
+                        <div class="td-content"><span class="td-title">Oct 12, 09:30 AM</span><span class="td-sub">By Citizen App</span></div>
+                      </td>
+                      <td><span class="badge-status status-pending">Pending</span></td>
+                      <td>
+                        <div class="action-buttons">
+                          <button class="btn btn-outline" title="Review"><i class="ph ph-eye"></i></button>
+                          <button class="btn btn-outline" title="Assign Inspector"><i class="ph ph-user-plus"></i></button>
+                        </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -330,8 +368,8 @@
           <div class="side-panel card">
             <div class="panel-section border-bottom">
               <div class="page-header map-header">
-                <h1>Green Patch Map</h1>
-                <p>Locations of all reported bare patches</p>
+                <h1>City Violation Map</h1>
+                <p>Locational analytics for civic safety reports</p>
               </div>
               <div class="map-layers-toggle">
                  <button class="layer-btn active" id="btnStreet">Street</button>
@@ -342,18 +380,17 @@
 
             <div class="panel-section border-bottom stats-quick">
               <h3>Quick Statistics</h3>
-              <div class="quick-stat-row"><span class="qs-label">Total Reports</span><span class="qs-value" id="qsTotal">0</span></div>
-              <div class="quick-stat-row"><span class="qs-label text-red">High Severity</span><span class="qs-value text-red bold" id="qsHighRisk">0</span></div>
+              <div class="quick-stat-row"><span class="qs-label">Complaints</span><span class="qs-value" id="qsTotal">142</span></div>
+              <div class="quick-stat-row"><span class="qs-label text-red">High-Risk Cases</span><span class="qs-value text-red bold">18</span></div>
             </div>
 
             <div class="panel-section flex-1 scrollable-panel">
-              <h3>Filter Reports</h3>
+              <h3>Filter Complaints</h3>
               <div class="filter-group">
-                <label>Severity</label>
+                <label>Status</label>
                 <div class="filter-checkboxes">
-                  <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot u-red"></span> High</label>
-                  <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot" style="background-color: var(--orange-main);"></span> Medium</label>
-                  <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot" style="background-color: var(--green-main);"></span> Low</label>
+                  <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot u-red"></span> High-risk</label>
+                  <label class="checkbox-item"><input type="checkbox" checked /> <span class="dot u-orange"></span> Pending</label>
                 </div>
               </div>
               <button class="btn btn-primary w-full"><i class="ph ph-funnel"></i> Apply Filters</button>
@@ -372,26 +409,68 @@
           <div class="dashboard-container max-width-large" style="max-width: 800px;">
             <div class="page-header header-flex">
               <div>
-                <h1>Activity & Notifications</h1>
-                <p>Recent report submissions and system events.</p>
+                <h1>Audit & Notifications</h1>
+                <p>System alerts, assigned tasks, and chronological activity.</p>
               </div>
             </div>
 
             <div class="img-notif-panel">
                <div class="img-notif-header">
-                 <h3>All Activity</h3>
+                 <h3>Recent Activity</h3>
                  <i class="ph ph-dots-three"></i>
                </div>
                
-               <div class="notif-list" id="notifications-list">
-                 <!-- Populated dynamically -->
-                 <div class="img-notif-card" style="justify-content: center; color: var(--text-muted); font-size: 13px;">
-                   Loading activity...
+               <div class="notif-list">
+                 
+                 <div class="img-notif-card">
+                   <div class="img-notif-icon dark"><i class="ph ph-files"></i></div>
+                   <div class="img-notif-content">
+                     <h4>New Violation Verified</h4>
+                     <p>Illegal construction at 442 West Oak Blvd.</p>
+                     <span class="time">12 MINUTES AGO</span>
+                   </div>
                  </div>
+
+                 <div class="img-notif-card">
+                   <div class="img-notif-icon light-blue"><i class="ph ph-warning-circle"></i></div>
+                   <div class="img-notif-content">
+                     <h4>Complaint Filed</h4>
+                     <p>Noise complaint submitted by citizen ref: #8821.</p>
+                     <span class="time">45 MINUTES AGO</span>
+                   </div>
+                 </div>
+
+                 <div class="img-notif-card">
+                   <div class="img-notif-icon light-green"><i class="ph ph-check"></i></div>
+                   <div class="img-notif-content">
+                     <h4>Case Resolved</h4>
+                     <p>Sanitation issue at City Plaza cleared by Dept 4.</p>
+                     <span class="time">2 HOURS AGO</span>
+                   </div>
+                 </div>
+
+                 <div class="img-notif-card">
+                   <div class="img-notif-icon light-yellow"><i class="ph ph-warning"></i></div>
+                   <div class="img-notif-content">
+                     <h4>System Alert</h4>
+                     <p>High complaint volume detected in South District.</p>
+                     <span class="time">4 HOURS AGO</span>
+                   </div>
+                 </div>
+
+                 <div class="img-notif-card">
+                   <div class="img-notif-icon dark"><i class="ph ph-user"></i></div>
+                   <div class="img-notif-content">
+                     <h4>Agent Assigned</h4>
+                     <p>Officer Miller assigned to Permit Case #102.</p>
+                     <span class="time">6 HOURS AGO</span>
+                   </div>
+                 </div>
+
                </div>
 
                <div class="img-notif-footer">
-                 <span>All Reports Shown</span>
+                 <span>View All Audit Logs</span>
                  <button class="img-notif-fab"><i class="ph ph-plus"></i></button>
                </div>
             </div>
@@ -406,14 +485,14 @@
           <div class="dashboard-container max-width-large" style="max-width: 900px;">
             <div class="page-header">
               <h1>My Profile</h1>
-              <p>Manage your Urban Canopy officer profile.</p>
+              <p>Manage your professional civic identity and contact data.</p>
             </div>
             
             <div class="panels-grid" style="grid-template-columns: 1fr 2fr;">
               <div class="card" style="text-align: center; padding: 32px;">
-                <img src="https://ui-avatars.com/api/?name=Admin+User&background=059669&color=fff&rounded=true&size=120" style="border-radius: 50%; margin-bottom: 16px;" alt="Avatar" />
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&rounded=true&size=120" style="border-radius: 50%; margin-bottom: 16px;" alt="Avatar" />
                 <h3 style="margin-bottom: 4px;">Admin User</h3>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Green Officer</p>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Chief Inspector</p>
                 <button class="btn btn-outline" style="width: 100%;">Upload New Photo</button>
               </div>
 
@@ -426,15 +505,15 @@
                   </div>
                   <div class="form-group">
                     <label>Role / Title</label>
-                    <input type="text" class="form-input" value="Green Officer" disabled style="background: var(--bg-app); cursor: not-allowed;" />
+                    <input type="text" class="form-input" value="Chief Inspector" disabled style="background: var(--bg-app); cursor: not-allowed;" />
                   </div>
                   <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" class="form-input" placeholder="name@urbancanopy.org" />
+                    <input type="email" class="form-input" placeholder="name@department.gov" />
                   </div>
                   <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="tel" class="form-input" value="+91 98765 43210" />
+                    <input type="tel" class="form-input" value="+1 (555) 019-2831" />
                   </div>
                 </div>
                 <button class="btn btn-primary" style="margin-top: 16px;">Save Changes</button>
@@ -450,7 +529,7 @@
           <div class="dashboard-container max-width-large" style="max-width: 900px;">
             <div class="page-header">
               <h1>System Settings</h1>
-              <p>Configure notifications, security, and app preferences.</p>
+              <p>Configure notifications, security, and global app preferences.</p>
             </div>
 
             <div class="card" style="padding: 32px; margin-bottom: 24px;">
@@ -459,7 +538,7 @@
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                  <div>
                    <p style="font-weight: 600; margin-bottom: 4px;">Email Alerts</p>
-                   <p style="font-size: 13px; color: var(--text-muted);">Receive emails when new reports are verified.</p>
+                   <p style="font-size: 13px; color: var(--text-muted);">Receive immediate emails on High-Risk incidents.</p>
                  </div>
                  <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--blue-primary);" />
               </div>
@@ -467,7 +546,7 @@
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                  <div>
                    <p style="font-weight: 600; margin-bottom: 4px;">Push Notifications</p>
-                   <p style="font-size: 13px; color: var(--text-muted);">Enable browser push notifications for new submissions.</p>
+                   <p style="font-size: 13px; color: var(--text-muted);">Enable browser push notifications when active.</p>
                  </div>
                  <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--blue-primary);" />
               </div>
@@ -479,7 +558,7 @@
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                  <div>
                    <p style="font-weight: 600; margin-bottom: 4px;">Two-Factor Authentication (2FA)</p>
-                   <p style="font-size: 13px; color: var(--text-muted);">Add extra security to your account.</p>
+                   <p style="font-size: 13px; color: var(--text-muted);">Protect your civic account with an additional security token.</p>
                  </div>
                  <button class="btn btn-outline">Enable 2FA</button>
               </div>
@@ -487,7 +566,7 @@
               <div style="display: flex; justify-content: space-between; align-items: center;">
                  <div>
                    <p style="font-weight: 600; margin-bottom: 4px;">Change Password</p>
-                   <p style="font-size: 13px; color: var(--text-muted);">Update your password regularly.</p>
+                   <p style="font-size: 13px; color: var(--text-muted);">Update your system access key regularly.</p>
                  </div>
                  <button class="btn btn-secondary">Update</button>
               </div>
